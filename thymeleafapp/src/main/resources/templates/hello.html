@@ -1,0 +1,16 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello My Thymeleaf App</title>
+</head>
+<body>
+    <h1 th:text="'Hello, ' + ${name} + '!'">Hello World!</h1>
+    <p th:text="${date}"></p>
+
+    <ul>
+        <li th:each="item : ${items}" th:text="${item}"></li>
+    </ul>
+</body>
+</html>
