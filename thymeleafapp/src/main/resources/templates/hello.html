@@ -6,11 +6,8 @@
     <title>Hello My Thymeleaf App</title>
 </head>
 <body>
+    <p th:text="${displayTime}"></p>
     <h1 th:text="'Hello, ' + ${name} + '!'">Hello World!</h1>
-    <p th:text="${date}"></p>
-
-    <ul>
-        <li th:each="item : ${items}" th:text="${item}"></li>
-    </ul>
+    <h3 th:text="${message}"></h3>
 </body>
 </html>
