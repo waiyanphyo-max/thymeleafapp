@@ -1,0 +1,9 @@
+.navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: #212529; /* Bootstrap dark shade */
+    padding: 10px 0;
+    position: sticky;
+    top: 0;
+}
