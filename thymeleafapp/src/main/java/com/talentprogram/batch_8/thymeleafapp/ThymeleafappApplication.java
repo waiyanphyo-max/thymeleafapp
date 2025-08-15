@@ -1,6 +1,8 @@
 package com.talentprogram.batch_8.thymeleafapp;
 
+import com.talentprogram.batch_8.thymeleafapp.model.Account;
 import com.talentprogram.batch_8.thymeleafapp.service.AccountService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -14,9 +16,6 @@ public class ThymeleafappApplication {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ThymeleafappApplication.class);
 
-	@Autowired
-	AccountService accountService;
-
 	public static void main(String[] args) {
 
 		SpringApplication.run(ThymeleafappApplication.class, args);
@@ -24,9 +23,4 @@ public class ThymeleafappApplication {
 		LOGGER.info("My Spring boot Thymeleaf app is started now.");
 
 	}
-
-
-
-
-
 }
