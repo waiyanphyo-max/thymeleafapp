@@ -1,0 +1,21 @@
+<!doctype html>
+<html th:fragment="layout{main}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hello My Thymeleaf App</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{/navbar.html :: navbar}"></div>
+    <div>
+        <div>
+            <p th:text="${displayTime}"></p>
+        </div>
+        <div class="hello">
+            <h1 th:text="'Hello, ' + ${name} + '!'">Hello World!</h1>
+            <h3 th:text="${message}"></h3>
+        </div>
+    </div>
+</body>
+</html>

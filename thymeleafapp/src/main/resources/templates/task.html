@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html th:fragment="layout{main}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Page</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div th:replace="~{/navbar.html :: navbar}"></div>
+    <h3 th:text="Tasks"></h3>
+        <table th:border="1">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Description</th>
+                    <th>Deadline</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="task : ${tasks}">
+                    <td th:text="${task.getId()}"></td>
+                    <td th:text="${task.getName()}"></td>
+                    <td th:text="${task.getDescription()}"></td>
+                    <td th:text="${task.getDeadline()}"></td>
+                </tr>
+            </tbody>
+        </table>
+</body>
+</html>

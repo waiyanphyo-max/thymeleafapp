@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html th:replace="~{layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar</title>
+</head>
+<body>
+    <main>
+        <nav th:fragment="navbar" class="navbar">
+
+            <div><h2><a th:href="@{/sayhello}">Home</a></h2></div>
+            <div><h2><a th:href="@{/task}">Tasks</a></h2></div>
+        </nav>
+    </main>
+</body>
+</html>
