@@ -17,12 +17,15 @@ import java.time.LocalDateTime;
 public class Transaction {
 
     @Id
-    private long transactionId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long transactionId;
 
     @Column(name="transactionType")
+    @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
     @Column(name="transactionCategory")
+    @Enumerated(EnumType.STRING)
     private TransactionCategory transactionCategory;
 
     @Column(name="amount")
@@ -47,5 +50,7 @@ public class Transaction {
 
     @Column(name="accountId")
     private String accountId;
+
+
 
 }
