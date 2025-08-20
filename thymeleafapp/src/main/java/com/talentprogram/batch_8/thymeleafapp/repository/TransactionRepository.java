@@ -12,6 +12,7 @@ import java.time.Month;
 import java.time.Year;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface TransactionRepository  extends JpaRepository<Transaction,Long> {
@@ -34,4 +35,7 @@ public interface TransactionRepository  extends JpaRepository<Transaction,Long> 
 
     @Query("select t from Transaction t where t.accountId = :accountId AND t.deleteFlag =0")
     List<Transaction> findAllTransaction(@Param("accountId") String accountId);
+
+    @Query("select t from Transaction t where t.accountId = :accountId AND t.deleteFlag =0 AND t.transactionId = :saveTransactionId")
+    Optional<Transaction> findByIdAndAccountId(@Param("accountId") String accountId, @Param("saveTransactionId") long saveTransactionId);
 }

@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html th:replace="~{layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Navbar</title>
+    <link th:href="@{/css/output.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 </head>
 <body>
-    <main>
-        <nav th:fragment="navbar" class="navbar">
-
-            <div><h2><a th:href="@{/sayhello}">Home</a></h2></div>
-            <div><h2><a th:href="@{/task}">Tasks</a></h2></div>
-        </nav>
-    </main>
+<!-- Navbar Fragment -->
+<nav th:fragment="navbar" class="navbar bg-black flex justify-between text-white p-4">
+    <div><h2><a th:href="@{/sayhello}">Home</a></h2></div>
+    <div><h2><a th:href="@{/}" class="text-white">Logout</a></h2></div>
+</nav>
 </body>
 </html>

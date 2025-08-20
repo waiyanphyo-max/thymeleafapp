@@ -1,21 +1,132 @@
-<!doctype html>
-<html th:fragment="layout{main}" xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hello My Thymeleaf App</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link th:href="@{/css/output.css}" rel="stylesheet">
 </head>
-<body>
-    <div th:replace="~{/navbar.html :: navbar}"></div>
-    <div>
-        <div>
-            <p th:text="${displayTime}"></p>
-        </div>
-        <div class="hello">
-            <h1 th:text="'Hello, ' + ${name} + '!'">Hello World!</h1>
-            <h3 th:text="${message}"></h3>
-        </div>
+<body class="font-sans bg-gray-100">
+
+<!-- Include Navbar -->
+<div th:replace="navbar :: navbar"></div>
+
+<!-- Main container -->
+<div class="max-w-5xl mx-auto mt-10 bg-white p-10 rounded-2xl shadow-lg">
+
+    <!-- Current Time -->
+    <div class="text-right text-gray-500 text-sm mb-5">
+        <p th:text="${displayTime}"></p>
     </div>
+
+    <!-- Greeting -->
+    <div class="text-center mb-8" th:if="${name != null}">
+        <h1 class="text-4xl text-blue-600 mb-2 font-bold" th:text="'Hello, ' + ${name} + '!'"></h1>
+        <h3 class="text-lg text-gray-600 italic" th:text="${message}"></h3>
+    </div>
+
+    <!-- Balance -->
+    <div class="text-center text-xl mt-6 font-semibold text-gray-700" th:if="${balance != null}">
+        <label class="mr-2 text-gray-800">Balance:</label>
+        <span class="text-green-600 font-bold" th:text="${balance}">0</span>
+    </div>
+
+    <div class="d-flex gap-4 mb-10">
+        <a th:href="@{/addIncome}" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Add Income</a>
+        <a th:href="@{/addExpense}" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-red-700 transition">Add Expense</a>
+    </div>
+
+    <!-- Transactions Table -->
+    <div class="overflow-x-auto mt-6">
+        <table class="w-full border-collapse rounded-lg shadow-sm bg-white">
+            <thead>
+            <tr class="bg-blue-600 text-white text-sm uppercase">
+                <th class="px-4 py-3 text-left">Transaction Id</th>
+                <th class="px-4 py-3 text-left">Type</th>
+                <th class="px-4 py-3 text-left">Category</th>
+                <th class="px-4 py-3 text-right">Amount</th>
+                <th class="px-4 py-3 text-left">Created At</th>
+                <th class="px-4 py-3 text-left">Updated At</th>
+                <th class="px-4 py-3 text-center">Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${transactions}" class="border-b hover:bg-gray-50 transition">
+                <td class="px-4 py-2 text-center" th:text="${item.transactionId}"></td>
+                <td class="px-4 py-2 text-center font-medium text-blue-700" th:text="${item.transactionType}"></td>
+                <td class="px-4 py-2 text-center" th:text="${item.transactionCategory}"></td>
+                <td class="px-4 py-2 text-center font-semibold text-gray-800" th:text="${item.amount}"></td>
+                <td class="px-4 py-2 text-center" th:text="${dtf.formatDateTime(item.createdAt)}"></td>
+                <td class="px-4 py-2 text-center" th:text="${dtf.formatDateTime(item.updatedAt)}"></td>
+                <td class="px-4 py-2 text-center flex justify-center gap-2">
+                    <!-- Edit Button -->
+                    <a th:href="@{'/editTransaction/' + ${item.transactionId}}"
+                       class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-300 transition text-sm">Edit</a>
+                    <!-- Delete Button -->
+                    <a th:href="@{'/deleteTransaction/' + ${item.transactionId}}"
+                       class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-300 transition text-sm">Delete</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${showForm}" class="mt-10 flex justify-center">
+        <form th:action="@{/addTransaction}" th:object="${transactionInput}" method="post"
+              class="w-80 bg-white p-6 rounded-xl shadow-md">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Add Transaction</h2>
+
+            <input type="hidden" th:name="type" th:value="${type}" />
+
+            <label class="block mb-2 text-gray-700">Category:</label>
+            <select th:field="*{transactionCategory}" class="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option value="" disabled selected>Select a category</option>
+                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+            </select>
+
+            <label class="block mb-2 text-gray-700">Amount:</label>
+            <input type="number" th:field="*{amount}" required
+                   class="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+
+            <button type="submit"
+                    class="w-full py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 transition">
+                Submit
+            </button>
+
+            <p th:if="${errorMessage}" th:text="${errorMessage}" class="text-red-500 text-sm mt-2 text-center"></p>
+        </form>
+    </div>
+
+    <div th:if="${showEdit}" class="mt-10 flex justify-center">
+        <form th:action="@{/editTransaction}" th:object="${transaction}" method="post"
+              class="w-80 bg-white p-6 rounded-xl shadow-md">
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Add Transaction</h2>
+
+            <input type="hidden" th:field="*{transactionId}" /> <!-- hidden field for ID -->
+
+            <label class="block mb-2 text-gray-700">Type:</label>
+            <select th:field="*{transactionType}" class="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option th:each="type : ${types}" th:value="${type}" th:text="${type}"></option>
+            </select>
+
+            <label class="block mb-2 text-gray-700">Category:</label>
+            <select th:field="*{transactionCategory}" class="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <option th:each="cat : ${categories}" th:value="${cat}" th:text="${cat}"></option>
+            </select>
+
+            <label class="block mb-2 text-gray-700">Amount:</label>
+            <input type="number" th:field="*{amount}" required
+                   class="w-full mb-4 p-2 border rounded focus:outline-none focus:ring-1 focus:ring-blue-500">
+
+            <button type="submit"
+                    class="w-full py-2 bg-blue-600 text-white rounded font-bold hover:bg-blue-700 transition">
+                Submit
+            </button>
+
+            <p th:if="${errorMessage}" th:text="${errorMessage}" class="text-red-500 text-sm mt-2 text-center"></p>
+        </form>
+    </div>
+
+</div>
 </body>
 </html>

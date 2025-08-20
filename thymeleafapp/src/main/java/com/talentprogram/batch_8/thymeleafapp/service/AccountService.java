@@ -1,21 +1,22 @@
 package com.talentprogram.batch_8.thymeleafapp.service;
 
+import com.talentprogram.batch_8.thymeleafapp.dto.AccountDto;
 import com.talentprogram.batch_8.thymeleafapp.model.Account;
 import com.talentprogram.batch_8.thymeleafapp.model.enumType.TransactionType;
 import com.talentprogram.batch_8.thymeleafapp.repository.AccountRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class AccountService {
     private static final Logger LOGGER = LoggerFactory.getLogger(AccountService.class);
 
-    @Autowired
-    AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
 
     public  boolean saveAccount(Account account){
 
@@ -27,6 +28,24 @@ public class AccountService {
         }
         return  false;
 
+    }
+
+    public boolean saveAccount(AccountDto accountDto) {
+        try {
+            Account account = new Account();
+            account.setAccountId(accountDto.getAccountId());
+            account.setAddress(accountDto.getAddress());
+            account.setUserName(accountDto.getUserName());
+            account.setPassword(accountDto.getPassword());
+            account.setNrcNumber(accountDto.getNrcNumber());
+            account.setEmail(accountDto.getEmail());
+            account.setBalance(0);
+            accountRepository.save(account);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return false;
     }
 
     public  boolean addInitialBalance(String accountId,double initialBalance){
@@ -83,5 +102,9 @@ public class AccountService {
             LOGGER.error(e.getMessage());
             return  null;
         }
+    }
+
+    public Account findByUserName(String userName) {
+        return accountRepository.findByUserName(userName);
     }
 }

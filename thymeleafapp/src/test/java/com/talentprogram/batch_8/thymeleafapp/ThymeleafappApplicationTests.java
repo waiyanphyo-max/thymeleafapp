@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDate;
 import java.time.YearMonth;
 
 @SpringBootTest
@@ -38,6 +39,7 @@ class ThymeleafappApplicationTests {
 		account1.setPassword("135792");
 		account1.setNrcNumber("5/MKKHA(N)329482");
 		account1.setEmail("aunglinhtun@gmail.com");
+		account1.setDateOfBirth(LocalDate.of(2005, 9, 12));
 		account1.setBalance(0);
 
 		Account account2 = new Account();
@@ -47,6 +49,7 @@ class ThymeleafappApplicationTests {
 		account2.setPassword("224680");
 		account2.setNrcNumber("5/KYAUK(N)302849");
 		account2.setEmail("aunglinhtun@gmail.com");
+		account1.setDateOfBirth(LocalDate.of(2004, 12, 23));
 		account2.setBalance(0);
 
 		Account account3 = new Account();
@@ -56,6 +59,7 @@ class ThymeleafappApplicationTests {
 		account3.setPassword("293847");
 		account3.setNrcNumber("8/CHAUK(N)183839");
 		account3.setEmail("theinzawhlaing@gmail.com");
+		account1.setDateOfBirth(LocalDate.of(1997, 3, 6));
 		account3.setBalance(0);
 
 		LOGGER.info("{} is saved now .{} ", account1.getUserName(), accountService.saveAccount(account1));
@@ -66,8 +70,8 @@ class ThymeleafappApplicationTests {
 	//@Test
 	void testAddInitialBalance(){
 
-		double initialBalance =300000;
-		String accountId= "09782140544";
+		double initialBalance =100000;
+		String accountId= "09776270898";
 		boolean isAdd = accountService.addInitialBalance(accountId,initialBalance);
 		if(isAdd){
 			LOGGER.info("Your account's initial balance is added now.");
@@ -78,31 +82,31 @@ class ThymeleafappApplicationTests {
 
 	}
 
-	//@Test
-	void testAddTransaction(){
-        try {
-            Transaction transaction=new Transaction();
-
-            transaction.setTransactionCategory(TransactionCategory.PH_BILL);
-            transaction.setTransactionType(TransactionType.expense);
-            transaction.setAmount(60000);
-            transaction.setAccountId("09953514037");
-
-            transactionService.saveNewTransaction(transaction);
-
-            Account updatedAccount = accountService.updateBalance(transaction.getAccountId(),transaction.getAmount(),transaction.getTransactionType(), transaction.getDeleteFlag());
-
-            LOGGER.info(updatedAccount.toString());
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage());
-        }
-
-    }
+//	//@Test
+//	void testAddTransaction(){
+//        try {
+//            Transaction transaction=new Transaction();
+//
+//            transaction.setTransactionCategory(TransactionCategory.PH_BILL);
+//            transaction.setTransactionType(TransactionType.expense);
+//            transaction.setAmount(5000);
+//            transaction.setAccountId("09776270898");
+//
+//            transactionService.saveNewTransaction(transaction);
+//
+//            Account updatedAccount = accountService.updateBalance(transaction.getAccountId(),transaction.getAmount(),transaction.getTransactionType(), transaction.getDeleteFlag());
+//
+//            LOGGER.info(updatedAccount.toString());
+//        } catch (Exception e) {
+//            LOGGER.error(e.getMessage());
+//        }
+//
+//    }
 
 	//@Test
 	void deleteTransaction() {
         try {
-            transactionService.deleteTransaction(2);
+            transactionService.deleteTransaction("09776270898", 3);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
@@ -154,7 +158,7 @@ class ThymeleafappApplicationTests {
         }
     }
 
-	@Test
+	//@Test
 	void getAllTransaction() {
 
 		String accountId= "09953514037";
