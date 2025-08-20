@@ -3,86 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <title>Monthly Summary</title>
-    <link th:href="@{/css/output.css}" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="font-sans bg-gray-100">
-    <div th:if="${incomeShow}" class="mt-10 flex justify-center">
-        <form th:action="@{/getMonthlySummary}" method="get"
-              class="w-80 bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Monthly Income Summary</h2>
 
-            <table class="w-full border-collapse rounded-lg shadow-sm bg-white">
-                <thead>
-                <tr class="bg-blue-600 text-white text-sm uppercase">
-                    <th class="px-4 py-3 text-left">Transaction Id</th>
-                    <th class="px-4 py-3 text-left">Type</th>
-                    <th class="px-4 py-3 text-left">Category</th>
-                    <th class="px-4 py-3 text-right">Amount</th>
-                    <th class="px-4 py-3 text-left">Created At</th>
-                    <th class="px-4 py-3 text-left">Updated At</th>
-                    <th class="px-4 py-3 text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item : ${incomes}" class="border-b hover:bg-gray-50 transition">
-                    <td class="px-4 py-2 text-center" th:text="${item.transactionId}"></td>
-                    <td class="px-4 py-2 text-center font-medium text-blue-700" th:text="${item.transactionType}"></td>
-                    <td class="px-4 py-2 text-center" th:text="${item.transactionCategory}"></td>
-                    <td class="px-4 py-2 text-center font-semibold text-gray-800" th:text="${item.amount}"></td>
-                    <td class="px-4 py-2 text-center" th:text="${dtf.formatDateTime(item.createdAt)}"></td>
-                    <td class="px-4 py-2 text-center" th:text="${dtf.formatDateTime(item.updatedAt)}"></td>
-                    <td class="px-4 py-2 text-center flex justify-center gap-2">
-                        <!-- Edit Button -->
-                        <a th:href="@{'/editTransaction/' + ${item.transactionId}}"
-                           class="px-3 py-1 bg-blue-600 text-white border border-solid border-white rounded hover:bg-blue-300 transition text-sm">Edit</a>
-                        <!-- Delete Button -->
-                        <a th:href="@{'/deleteTransaction/' + ${item.transactionId}}"
-                           class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-300 transition text-sm">Delete</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </form>
+<div th:replace="navbar :: navbar"></div>
+
+<!-- ================= FORM ================= -->
+<div th:if="${showInput}" class="mt-10 flex justify-center">
+    <form th:action="@{/getMonthlySummary}" method="get"
+          class="w-96 bg-white p-6 rounded-xl shadow-md">
+
+        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Monthly Summary Filter</h2>
+
+        <!-- Year Dropdown -->
+        <label for="selectedYear" class="block mb-2 font-medium text-gray-700">Year</label>
+        <select id="selectedYear" name="selectedYear"
+                class="w-full mb-4 border rounded-lg px-3 py-2 focus:ring focus:ring-blue-300">
+            <option value="">Select Year</option>
+            <th:block th:each="y : ${years}">
+                <option th:value="${y}" th:text="${y}" th:selected="${y == selectedYear}"></option>
+            </th:block>
+        </select>
+
+        <!-- Month Dropdown -->
+        <label for="selectedMonth" class="block mb-2 font-medium text-gray-700">Month</label>
+        <select id="selectedMonth" name="selectedMonth"
+                class="w-full mb-6 border rounded-lg px-3 py-2 focus:ring focus:ring-blue-300">
+            <option value="">Select Month</option>
+            <th:block th:each="m : ${months}">
+                <option th:value="${m}" th:text="${m}" th:selected="${m == selectedMonth}"></option>
+            </th:block>
+        </select>
+
+        <!-- Buttons -->
+        <div class="flex gap-4 justify-center">
+            <button type="submit" name="view" value="incomes"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition">
+                Show Incomes
+            </button>
+            <button type="submit" name="view" value="expenses"
+                    class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                Show Expenses
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- ================= INCOME TABLE ================= -->
+<div th:if="${incomeShow}" class="mt-10 flex justify-center">
+    <div class="max-w-6xl w-full bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold text-center text-blue-700 mb-6">
+            Income Summary for <span th:text="${formattedMonthYear}"></span>
+        </h2>
+
+        <table class="w-full border-collapse rounded-lg shadow-sm bg-white text-base">
+            <thead>
+            <tr class="bg-blue-600 text-white uppercase">
+                <th class="px-6 py-3 text-left">Transaction Id</th>
+                <th class="px-6 py-3 text-left">Type</th>
+                <th class="px-6 py-3 text-left">Category</th>
+                <th class="px-6 py-3 text-right">Amount</th>
+                <th class="px-6 py-3 text-left">Created At</th>
+                <th class="px-6 py-3 text-left">Updated At</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${incomes}" class="border-b hover:bg-blue-50 transition">
+                <td class="px-6 py-3 text-center" th:text="${item.transactionId}"></td>
+                <td class="px-6 py-3 text-center font-medium text-blue-700" th:text="${item.transactionType}"></td>
+                <td class="px-6 py-3 text-center" th:text="${item.transactionCategory}"></td>
+                <td class="px-6 py-3 text-right font-semibold text-gray-800" th:text="${item.amount}"></td>
+                <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.createdAt)}"></td>
+                <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.updatedAt)}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+</div>
 
-    <div th:if="${expenseShow}">
-        <form th:action="@{/getMonthlySummary}" method="get"
-              class="w-80 bg-white p-6 rounded-xl shadow-md">
-            <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Monthly Expense Summary</h2>
+<!-- ================= EXPENSE TABLE ================= -->
+<div th:if="${expenseShow}" class="mt-10 flex justify-center">
+    <div class="max-w-6xl w-full bg-white p-6 rounded-xl shadow-md">
+        <h2 class="text-2xl font-bold text-center text-red-700 mb-6">
+            Expense Summary for <span th:text="${formattedMonthYear}"></span>
+        </h2>
 
-            <table class="w-full border-collapse rounded-lg shadow-sm bg-white">
-                <thead>
-                <tr class="bg-blue-600 text-white text-sm uppercase">
-                    <th class="px-4 py-3 text-left">Transaction Id</th>
-                    <th class="px-4 py-3 text-left">Type</th>
-                    <th class="px-4 py-3 text-left">Category</th>
-                    <th class="px-4 py-3 text-right">Amount</th>
-                    <th class="px-4 py-3 text-left">Created At</th>
-                    <th class="px-4 py-3 text-left">Updated At</th>
-                    <th class="px-4 py-3 text-center">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="item : ${expenses}" class="border-b hover:bg-gray-50 transition">
-                    <td class="px-4 py-2 text-center" th:text="${item.transactionId}"></td>
-                    <td class="px-4 py-2 text-center font-medium text-blue-700" th:text="${item.transactionType}"></td>
-                    <td class="px-4 py-2 text-center" th:text="${item.transactionCategory}"></td>
-                    <td class="px-4 py-2 text-center font-semibold text-gray-800" th:text="${item.amount}"></td>
-                    <td class="px-4 py-2 text-center" th:text="${dtf.formatDateTime(item.createdAt)}"></td>
-                    <td class="px-4 py-2 text-center" th:text="${dtf.formatDateTime(item.updatedAt)}"></td>
-                    <td class="px-4 py-2 text-center flex justify-center gap-2">
-                        <!-- Edit Button -->
-                        <a th:href="@{'/editTransaction/' + ${item.transactionId}}"
-                           class="px-3 py-1 bg-blue-600 text-white border border-solid border-white rounded hover:bg-blue-300 transition text-sm">Edit</a>
-                        <!-- Delete Button -->
-                        <a th:href="@{'/deleteTransaction/' + ${item.transactionId}}"
-                           class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-300 transition text-sm">Delete</a>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-
-        </form>
+        <table class="w-full border-collapse rounded-lg shadow-sm bg-white text-base">
+            <thead>
+            <tr class="bg-red-600 text-white uppercase">
+                <th class="px-6 py-3 text-left">Transaction Id</th>
+                <th class="px-6 py-3 text-left">Type</th>
+                <th class="px-6 py-3 text-left">Category</th>
+                <th class="px-6 py-3 text-right">Amount</th>
+                <th class="px-6 py-3 text-left">Created At</th>
+                <th class="px-6 py-3 text-left">Updated At</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${expenses}" class="border-b hover:bg-red-50 transition">
+                <td class="px-6 py-3 text-center" th:text="${item.transactionId}"></td>
+                <td class="px-6 py-3 text-center font-medium text-red-700" th:text="${item.transactionType}"></td>
+                <td class="px-6 py-3 text-center" th:text="${item.transactionCategory}"></td>
+                <td class="px-6 py-3 text-right font-semibold text-gray-800" th:text="${item.amount}"></td>
+                <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.createdAt)}"></td>
+                <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.updatedAt)}"></td>
+            </tr>
+            </tbody>
+        </table>
     </div>
+</div>
+
 </body>
 </html>

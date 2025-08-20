@@ -73,11 +73,8 @@ public class HelloController {
         model.addAttribute("transactionInput", new TransactionInput());
 
         model.addAttribute("categories", TransactionCategory.values());
-
-        model.addAttribute("showForm", false);
         model.addAttribute("showEdit", false);
-        model.addAttribute("showInput", false);
-
+        model.addAttribute("showForm", false);
         return "hello";
     }
 
@@ -230,7 +227,7 @@ public class HelloController {
     }
 
     @GetMapping("/getMonthlySummary")
-    public String getMonthlySummary(@RequestParam("selectedYear") @Validated int year, @RequestParam("selectedMonth") @Validated int month, HttpSession session, Model model) {
+    public String getMonthlySummary(@RequestParam String view, @RequestParam("selectedYear") @Validated int year, @RequestParam("selectedMonth") @Validated int month, HttpSession session, Model model) {
         Account account = (Account) session.getAttribute("account");
         String accountId = account.getAccountId();
 
@@ -241,10 +238,38 @@ public class HelloController {
         List<Transaction> incomeTransactions = transactionService.getMonthlyIncomeSummary(accountId, yearMonth);
         List<Transaction> expenseTransactions = transactionService.getMonthlyExpenseSummary(accountId, yearMonth);
 
-        model.addAttribute("incomes", incomeTransactions);
-        model.addAttribute("expenses", expenseTransactions);
+        List<Integer> years = IntStream.rangeClosed(1990, 2100)
+                .boxed()
+                .toList();
 
-        return "hello";
+        List<Integer> months = IntStream.rangeClosed(1, 12)
+                .boxed()
+                .toList();
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+        int currentMonth = today.getMonthValue();
+
+        model.addAttribute("years", years);
+        model.addAttribute("months", months);
+        model.addAttribute("selectedYear", currentYear);
+        model.addAttribute("selectedMonth", currentMonth);
+        model.addAttribute("showInput", true);
+
+        if ("incomes".equals(view)) {
+            model.addAttribute("incomes", incomeTransactions);
+            model.addAttribute("incomeShow", true);
+        } else if ("expenses".equals(view)) {
+            model.addAttribute("expenses", expenseTransactions);
+            model.addAttribute("expenseShow", true);
+        }
+        model.addAttribute("showInput", true);
+
+        YearMonth ym = YearMonth.of(year, month);
+        String formattedMonthYear = ym.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
+
+        model.addAttribute("formattedMonthYear", formattedMonthYear);
+
+        return "monthlySummary";
     }
 
     @GetMapping("/inputMonth")
@@ -266,7 +291,7 @@ public class HelloController {
         model.addAttribute("selectedYear", currentYear);
         model.addAttribute("selectedMonth", currentMonth);
         model.addAttribute("showInput", true);
-        return "hello";
+        return "monthlySummary";
     }
 
 }
