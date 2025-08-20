@@ -51,6 +51,7 @@ public class Transaction {
     @Column(name="accountId")
     private String accountId;
 
-
+    @Column(name = "note")
+    private String note;
 
 }

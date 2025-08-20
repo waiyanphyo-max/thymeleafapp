@@ -138,6 +138,7 @@ public class TransactionService {
         LocalDateTime end = yearMonth.plusMonths(1).atDay(1).atStartOfDay();
 
         try {
+            LOGGER.info("Monthly Expense Summary : {}",transactionRepository.findMonthlyExpenseSummary(accountId, start, end).toString());
             return transactionRepository.findMonthlyExpenseSummary(accountId, start, end);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
@@ -150,6 +151,7 @@ public class TransactionService {
         LocalDateTime end = yearMonth.plusMonths(1).atDay(1).atStartOfDay();
 
         try {
+            LOGGER.info("Monthly Income Summary : {}",transactionRepository.findMonthlyIncomeSummary(accountId, start, end).toString());
             return transactionRepository.findMonthlyIncomeSummary(accountId, start, end);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());

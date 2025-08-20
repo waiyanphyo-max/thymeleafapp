@@ -12,6 +12,8 @@ import com.talentprogram.batch_8.thymeleafapp.service.AccountService;
 import com.talentprogram.batch_8.thymeleafapp.service.TransactionService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,14 +21,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.Month;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping
@@ -39,6 +40,8 @@ public class HelloController {
     private static final LocalTime ninePM = LocalTime.of(21, 0);
 
     private final TransactionService transactionService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloController.class);
 
     private final AccountService accountService;
     private final TransactionRepository transactionRepository;
@@ -73,6 +76,7 @@ public class HelloController {
 
         model.addAttribute("showForm", false);
         model.addAttribute("showEdit", false);
+        model.addAttribute("showInput", false);
 
         return "hello";
     }
@@ -222,6 +226,46 @@ public class HelloController {
         List<TransactionDto> transactionDtos = transactionService.getAllTransaction(account.getAccountId());
         model.addAttribute("transactions", transactionDtos);
 
+        return "hello";
+    }
+
+    @GetMapping("/getMonthlySummary")
+    public String getMonthlySummary(@RequestParam("selectedYear") @Validated int year, @RequestParam("selectedMonth") @Validated int month, HttpSession session, Model model) {
+        Account account = (Account) session.getAttribute("account");
+        String accountId = account.getAccountId();
+
+        LOGGER.info("AccountId in getMonthlySummary is {}", accountId);
+
+        YearMonth yearMonth = YearMonth.of(year, month);
+
+        List<Transaction> incomeTransactions = transactionService.getMonthlyIncomeSummary(accountId, yearMonth);
+        List<Transaction> expenseTransactions = transactionService.getMonthlyExpenseSummary(accountId, yearMonth);
+
+        model.addAttribute("incomes", incomeTransactions);
+        model.addAttribute("expenses", expenseTransactions);
+
+        return "hello";
+    }
+
+    @GetMapping("/inputMonth")
+    public String getMonthAndType(Model model) {
+
+        List<Integer> years = IntStream.rangeClosed(1990, 2100)
+                .boxed()
+                .toList();
+
+        List<Integer> months = IntStream.rangeClosed(1, 12)
+                .boxed()
+                .toList();
+        LocalDate today = LocalDate.now();
+        int currentYear = today.getYear();
+        int currentMonth = today.getMonthValue();
+
+        model.addAttribute("years", years);
+        model.addAttribute("months", months);
+        model.addAttribute("selectedYear", currentYear);
+        model.addAttribute("selectedMonth", currentMonth);
+        model.addAttribute("showInput", true);
         return "hello";
     }
 
