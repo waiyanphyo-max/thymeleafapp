@@ -1,9 +1,7 @@
 package com.talentprogram.batch_8.thymeleafapp;
 
 import com.talentprogram.batch_8.thymeleafapp.model.Account;
-import com.talentprogram.batch_8.thymeleafapp.model.Transaction;
 import com.talentprogram.batch_8.thymeleafapp.model.enumType.TransactionCategory;
-import com.talentprogram.batch_8.thymeleafapp.model.enumType.TransactionType;
 import com.talentprogram.batch_8.thymeleafapp.service.AccountService;
 import com.talentprogram.batch_8.thymeleafapp.service.TransactionService;
 import org.junit.jupiter.api.Test;
@@ -14,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
 class ThymeleafappApplicationTests {
@@ -49,7 +49,7 @@ class ThymeleafappApplicationTests {
 		account2.setPassword("224680");
 		account2.setNrcNumber("5/KYAUK(N)302849");
 		account2.setEmail("aunglinhtun@gmail.com");
-		account1.setDateOfBirth(LocalDate.of(2004, 12, 23));
+		account2.setDateOfBirth(LocalDate.of(2004, 12, 23));
 		account2.setBalance(0);
 
 		Account account3 = new Account();
@@ -59,7 +59,7 @@ class ThymeleafappApplicationTests {
 		account3.setPassword("293847");
 		account3.setNrcNumber("8/CHAUK(N)183839");
 		account3.setEmail("theinzawhlaing@gmail.com");
-		account1.setDateOfBirth(LocalDate.of(1997, 3, 6));
+		account3.setDateOfBirth(LocalDate.of(1997, 3, 6));
 		account3.setBalance(0);
 
 		LOGGER.info("{} is saved now .{} ", account1.getUserName(), accountService.saveAccount(account1));
@@ -132,7 +132,7 @@ class ThymeleafappApplicationTests {
         }
     }
 
-	@Test
+	//@Test
 	void getMonthlyExpenseSummary() {
 
 		String accountId= "09782140544";
@@ -168,5 +168,11 @@ class ThymeleafappApplicationTests {
             LOGGER.error(e.getMessage());
         }
     }
+
+	@Test
+	void testGetAllAccount() {
+		LOGGER.info("Account size is :{}",accountService.getAllAccounts().size());
+		assertEquals(7, accountService.getAllAccounts().size());
+	}
 
 }

@@ -1,5 +1,6 @@
 package com.talentprogram.batch_8.thymeleafapp.dto;
 
+import com.talentprogram.batch_8.thymeleafapp.model.Account;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -31,4 +32,17 @@ public class AccountDto {
     private String address;
 
     private LocalDate dateOfBirth;
+
+    public static AccountDto getAccountDto(Account account) {
+        AccountDto accountDto = new AccountDto();
+        accountDto.setAccountId(account.getAccountId());
+        accountDto.setUserName(account.getUserName());
+        accountDto.setEmail(account.getEmail());
+        accountDto.setPassword(account.getPassword());
+        accountDto.setNrcNumber(account.getNrcNumber());
+        accountDto.setAddress(account.getAddress());
+        accountDto.setDateOfBirth(account.getDateOfBirth());
+        return accountDto;
+
+    }
 }

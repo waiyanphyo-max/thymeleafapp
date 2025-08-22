@@ -64,8 +64,7 @@
                 <th class="px-6 py-3 text-left">Type</th>
                 <th class="px-6 py-3 text-left">Category</th>
                 <th class="px-6 py-3 text-right">Amount</th>
-                <th class="px-6 py-3 text-left">Created At</th>
-                <th class="px-6 py-3 text-left">Updated At</th>
+                <th class="px-6 py-3 text-left">Created Date</th>
             </tr>
             </thead>
             <tbody>
@@ -75,7 +74,6 @@
                 <td class="px-6 py-3 text-center" th:text="${item.transactionCategory}"></td>
                 <td class="px-6 py-3 text-right font-semibold text-gray-800" th:text="${item.amount}"></td>
                 <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.createdAt)}"></td>
-                <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.updatedAt)}"></td>
             </tr>
             </tbody>
         </table>
@@ -96,8 +94,7 @@
                 <th class="px-6 py-3 text-left">Type</th>
                 <th class="px-6 py-3 text-left">Category</th>
                 <th class="px-6 py-3 text-right">Amount</th>
-                <th class="px-6 py-3 text-left">Created At</th>
-                <th class="px-6 py-3 text-left">Updated At</th>
+                <th class="px-6 py-3 text-left">Created Date</th>
             </tr>
             </thead>
             <tbody>
@@ -107,7 +104,6 @@
                 <td class="px-6 py-3 text-center" th:text="${item.transactionCategory}"></td>
                 <td class="px-6 py-3 text-right font-semibold text-gray-800" th:text="${item.amount}"></td>
                 <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.createdAt)}"></td>
-                <td class="px-6 py-3 text-center" th:text="${dtf.formatDateTime(item.updatedAt)}"></td>
             </tr>
             </tbody>
         </table>

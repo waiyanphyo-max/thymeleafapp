@@ -1,5 +1,6 @@
 package com.talentprogram.batch_8.thymeleafapp.controller;
 
+import com.talentprogram.batch_8.thymeleafapp.dto.AccountDto;
 import com.talentprogram.batch_8.thymeleafapp.dto.TransactionDto;
 import com.talentprogram.batch_8.thymeleafapp.dto.TransactionInput;
 import com.talentprogram.batch_8.thymeleafapp.model.Account;
@@ -14,7 +15,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,7 +26,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Controller
@@ -75,6 +74,9 @@ public class HelloController {
         model.addAttribute("categories", TransactionCategory.values());
         model.addAttribute("showEdit", false);
         model.addAttribute("showForm", false);
+
+        model.addAttribute("account", account);
+
         return "hello";
     }
 
@@ -93,31 +95,39 @@ public class HelloController {
         return message;
     }
 
-    @GetMapping("/task")
-    public String tasks(Model model) {
-        ArrayList<Task> tasks = new ArrayList<>();
-        tasks.add(task);
-        tasks.add(task2);
-        tasks.add(task3);
-        model.addAttribute("tasks", tasks);
-        return "task";
-    }
+//    @GetMapping("/task")
+//    public String tasks(Model model) {
+//        ArrayList<Task> tasks = new ArrayList<>();
+//        tasks.add(task);
+//        tasks.add(task2);
+//        tasks.add(task3);
+//        model.addAttribute("tasks", tasks);
+//        return "task";
+//    }
 
     @GetMapping("/addIncome")
-    public String addIncome(Model model) {
+    public String addIncome(Model model, HttpSession session) {
+        Account account = (Account) session.getAttribute("account");
         model.addAttribute("type", TransactionType.income);
         model.addAttribute("transactionInput", new TransactionDto());
         model.addAttribute("categories", TransactionCategory.values());
         model.addAttribute("showForm", true);
+        session.getAttribute("account");
+        session.setAttribute("account", account);
+        model.addAttribute("account", account);
         return "hello";
     }
 
     @GetMapping("/addExpense")
-    public String addExpense(Model model) {
+    public String addExpense(Model model, HttpSession session) {
+        Account account = (Account) session.getAttribute("account");
         model.addAttribute("type", TransactionType.expense);
         model.addAttribute("transactionInput", new TransactionDto());
         model.addAttribute("categories", TransactionCategory.values());
         model.addAttribute("showForm", true);
+        session.getAttribute("account");
+        session.setAttribute("account", account);
+        model.addAttribute("account", account);
         return "hello";
     }
 
@@ -148,6 +158,7 @@ public class HelloController {
 
         List<TransactionDto> transactionDtos = transactionService.getAllTransaction(accountId);
         model.addAttribute("transactions", transactionDtos);
+        model.addAttribute("account", account);
 
         return "hello";
 
@@ -173,13 +184,23 @@ public class HelloController {
 
         List<TransactionDto> transactionDtos = transactionService.getAllTransaction(accountId);
         model.addAttribute("transactions", transactionDtos);
+        model.addAttribute("account", account);
 
         return "hello";
 
     }
 
+    @GetMapping("/deleteAccount")
+    public String deleteAccount(HttpSession session) {
+        Account account = (Account) session.getAttribute("account");
+        String accountId = account.getAccountId();
+        accountService.deleteAccount(accountId);
+        return "redirect:/signUp";
+    }
+
     @GetMapping("/editTransaction/{transactionId}")
-    public String editTransaction(@PathVariable("transactionId") long transactionId, Model model) {
+    public String editTransaction(@PathVariable("transactionId") long transactionId, Model model, HttpSession session) {
+        Account account = (Account) session.getAttribute("account");
         Optional<Transaction> transaction = transactionService.findById(transactionId);
         Transaction transaction1 = transaction.get();
         TransactionDto transactionDto = new TransactionDto();
@@ -188,19 +209,17 @@ public class HelloController {
         transactionDto.setTransactionType(transaction1.getTransactionType());
         transactionDto.setTransactionCategory(transaction1.getTransactionCategory());
         model.addAttribute("transaction", transactionDto);
-//        model.addAttribute("transactionDto", transactionDto);
-//        model.addAttribute("transaction", transaction1);
         model.addAttribute("categories", TransactionCategory.values());
         model.addAttribute("types", TransactionType.values());
-//        model.addAttribute("amount", transaction1.getAmount());
-//        model.addAttribute("type", transaction1.getTransactionType());
-//        model.addAttribute("category", transaction1.getTransactionCategory());
         model.addAttribute("showEdit", true);
+        model.addAttribute("editProfileForm", false);
+        model.addAttribute("account", account);
+
         return "/hello";
     }
 
     @PostMapping("/editTransaction")
-    public String editTransaction(Model model, @ModelAttribute("transaction") @Validated TransactionDto transaction, BindingResult result, HttpSession session) {
+    public String editTransaction(Model model, @ModelAttribute("transaction") @Validated TransactionDto transaction, BindingResult result) {
 
         if (result.hasErrors()) {
             model.addAttribute("errors", result.getAllErrors());
@@ -222,6 +241,7 @@ public class HelloController {
 
         List<TransactionDto> transactionDtos = transactionService.getAllTransaction(account.getAccountId());
         model.addAttribute("transactions", transactionDtos);
+        model.addAttribute("account", account);
 
         return "hello";
     }
@@ -268,6 +288,7 @@ public class HelloController {
         String formattedMonthYear = ym.format(DateTimeFormatter.ofPattern("MMMM yyyy"));
 
         model.addAttribute("formattedMonthYear", formattedMonthYear);
+        model.addAttribute("account", account);
 
         return "monthlySummary";
     }
@@ -291,7 +312,43 @@ public class HelloController {
         model.addAttribute("selectedYear", currentYear);
         model.addAttribute("selectedMonth", currentMonth);
         model.addAttribute("showInput", true);
+
         return "monthlySummary";
+    }
+
+    @GetMapping("/editProfile")
+    public String editProfile(HttpSession session, Model model) {
+        Account account = (Account) session.getAttribute("account");
+        AccountDto accountDto = AccountDto.getAccountDto(account);
+        model.addAttribute("accountDto", accountDto);
+        model.addAttribute("editProfileForm", true);
+        model.addAttribute("account", account);
+
+        return "hello";
+    }
+
+    @PostMapping("/editProfile")
+    public String editAccount(@ModelAttribute @Validated AccountDto accountDto, BindingResult result, HttpSession session, Model model) {
+        Account account = accountService.editAccount(accountDto);
+        session.setAttribute("account", account);
+        model.addAttribute("account", account);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalTime currentTime = now.toLocalTime();
+
+        model.addAttribute("name", account.getUserName());
+        model.addAttribute("displayTime", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm-ss")));
+        model.addAttribute("balance", account.getBalance());
+
+        final var message = getString(currentTime, account);
+
+        model.addAttribute("message", message);
+
+        List<TransactionDto> transactionDtos = transactionService.getAllTransaction(account.getAccountId());
+        model.addAttribute("transactions", transactionDtos);
+        model.addAttribute("account", account);
+
+        return "hello";
     }
 
 }

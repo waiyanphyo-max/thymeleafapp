@@ -33,11 +33,17 @@ public class AuthController {
             model.addAttribute("errorMessage", "Please fill all fields with correct input.");
             return "signUp";
         }
-        try {
-            service.saveAccount(accountDto);
-        } catch (Exception e) {
-            model.addAttribute("errorMessage", "Please fill all fields with correct input.");
+
+        if (service.findById(accountDto.getAccountId()).isPresent()) {
+            model.addAttribute("errorMessage", "Account already exists.");
             return "signUp";
+        } else {
+            try {
+                service.saveAccount(accountDto);
+            } catch (Exception e) {
+                model.addAttribute("errorMessage", "Please fill all fields with correct input.");
+                return "signUp";
+            }
         }
 
         return "redirect:/";
@@ -56,14 +62,19 @@ public class AuthController {
 
         Account account = service.findByUserName(userName);
 
-        if (account == null || !account.getPassword().equals(password)) {
-            model.addAttribute("errorMessage", "Invalid Username or password.");
+        if (account.getDeleteFlag() == 1) {
+            model.addAttribute("errorMessage", "Your account has been deleted.");
             return "signIn";
+        } else {
+            if (account == null || !account.getPassword().equals(password)) {
+                model.addAttribute("errorMessage", "Invalid Username or password.");
+                return "signIn";
+            }
+
+            session.setAttribute("account", account);
+
+            return "redirect:/sayhello";
         }
-
-        session.setAttribute("account", account);
-
-        return "redirect:/sayhello";
 
     }
 }

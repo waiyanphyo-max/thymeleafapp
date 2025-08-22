@@ -1,3 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Dancing+Script:wght@400..700&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    :root {
+        --logoFont: "Dancing Script", cursive;
+        --titleFont: "Lato", sans-serif;
+        --textFont: "Poppins", sans-serif;
+        --black: #212121;
+        --white: #fff;
+        --orange: #ff9933;
+        --gray: #ddd;
+        --blue: #00f;
+        --red: #f00;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        @apply font-titleFont;
+    }
+
+    dt {
+        background-color: blue;
+        height: 45px;
+        padding-left: 3px;
+        padding-top: 6px;
+        color: var(--white);
+        border: 1px solid white;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    dd {
+        border: 1px solid black;
+        display: none;
+        padding: 3px
+    }
+
+    img {
+        width: 50px;
+        height: 200px;
+    }
+
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+}
+
+

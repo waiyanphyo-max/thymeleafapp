@@ -48,22 +48,6 @@ public class TransactionService {
         }
     }
 
-//    public boolean editTransaction(long transactionId) {
-//
-//        try {
-//            Optional<Transaction> transaction = transactionRepository.findById(transactionId);
-//            if (transaction.isEmpty()) {
-//                LOGGER.info("Your transaction doesn't not exist");
-//                return false;
-//            }
-//            transactionRepository.save(transaction.get());
-//            return true;
-//        } catch (Exception e) {
-//            LOGGER.error(e.getMessage());
-//            return false;
-//        }
-//    }
-
     public Account editTransaction(TransactionDto transactionDto){
 
         try {
