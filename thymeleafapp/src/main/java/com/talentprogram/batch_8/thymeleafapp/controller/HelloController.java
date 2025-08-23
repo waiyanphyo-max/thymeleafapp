@@ -329,6 +329,17 @@ public class HelloController {
 
     @PostMapping("/editProfile")
     public String editAccount(@ModelAttribute @Validated AccountDto accountDto, BindingResult result, HttpSession session, Model model) {
+
+        if (accountService.findById(accountDto.getAccountId()).isEmpty()) {
+            model.addAttribute("errors", "account is not found");
+            return "redirect:/editProfile";
+        }
+
+        if (result.hasErrors()) {
+            model.addAttribute("errors", result.getAllErrors());
+            return "redirect:/editProfile";
+        }
+
         Account account = accountService.editAccount(accountDto);
         session.setAttribute("account", account);
         model.addAttribute("account", account);

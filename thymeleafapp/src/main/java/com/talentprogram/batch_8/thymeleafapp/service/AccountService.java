@@ -38,6 +38,12 @@ public class AccountService {
 
     public boolean saveAccount(AccountDto accountDto) {
         try {
+            String accountId = accountDto.getAccountId();
+
+            if (accountRepository.existsById(accountId)) {
+                return false;
+            }
+
             Account account = new Account();
             account.setAccountId(accountDto.getAccountId());
             account.setAddress(accountDto.getAddress());
@@ -115,7 +121,7 @@ public class AccountService {
     }
 
     public List<Account> getAllAccounts(){
-        return accountRepository.findAll();
+        return accountRepository.findAllActiveAccount();
     }
 
     public Optional<Account> findById(String accountId) {

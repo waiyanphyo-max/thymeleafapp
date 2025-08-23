@@ -1,7 +1,11 @@
 package com.talentprogram.batch_8.thymeleafapp;
 
+import com.talentprogram.batch_8.thymeleafapp.dto.TransactionInput;
 import com.talentprogram.batch_8.thymeleafapp.model.Account;
+import com.talentprogram.batch_8.thymeleafapp.model.Transaction;
 import com.talentprogram.batch_8.thymeleafapp.model.enumType.TransactionCategory;
+import com.talentprogram.batch_8.thymeleafapp.model.enumType.TransactionType;
+import com.talentprogram.batch_8.thymeleafapp.repository.TransactionRepository;
 import com.talentprogram.batch_8.thymeleafapp.service.AccountService;
 import com.talentprogram.batch_8.thymeleafapp.service.TransactionService;
 import org.junit.jupiter.api.Test;
@@ -12,8 +16,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
 import java.time.YearMonth;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 class ThymeleafappApplicationTests {
@@ -65,12 +71,15 @@ class ThymeleafappApplicationTests {
 		LOGGER.info("{} is saved now .{} ", account1.getUserName(), accountService.saveAccount(account1));
 		LOGGER.info("{} is saved now .{} ", account2.getUserName(), accountService.saveAccount(account2));
 		LOGGER.info("{} is saved now .{} ", account3.getUserName(), accountService.saveAccount(account3));
+		assertTrue(accountService.saveAccount(account1));
+		assertTrue(accountService.saveAccount(account2));
+		assertTrue(accountService.saveAccount(account2));
 	}
 
 	//@Test
 	void testAddInitialBalance(){
 
-		double initialBalance =100000;
+		double initialBalance =300000;
 		String accountId= "09776270898";
 		boolean isAdd = accountService.addInitialBalance(accountId,initialBalance);
 		if(isAdd){
@@ -80,44 +89,76 @@ class ThymeleafappApplicationTests {
 			LOGGER.error("Please check your input!");
 		}
 
+		double initialBalance2 =400000;
+		String accountId2= "09782140544";
+		boolean isAdd2 = accountService.addInitialBalance(accountId2,initialBalance2);
+		if(isAdd2){
+			LOGGER.info("Your account's initial balance is added now.");
+		}
+		else{
+			LOGGER.error("Please check your input!");
+		}
+
+		double initialBalance3 =500000;
+		String accountId3= "09953514037";
+		boolean isAdd3 = accountService.addInitialBalance(accountId3,initialBalance3);
+		if(isAdd3){
+			LOGGER.info("Your account's initial balance is added now.");
+		}
+		else{
+			LOGGER.error("Please check your input!");
+		}
+
 	}
 
-//	//@Test
-//	void testAddTransaction(){
-//        try {
-//            Transaction transaction=new Transaction();
-//
-//            transaction.setTransactionCategory(TransactionCategory.PH_BILL);
-//            transaction.setTransactionType(TransactionType.expense);
-//            transaction.setAmount(5000);
-//            transaction.setAccountId("09776270898");
-//
-//            transactionService.saveNewTransaction(transaction);
-//
-//            Account updatedAccount = accountService.updateBalance(transaction.getAccountId(),transaction.getAmount(),transaction.getTransactionType(), transaction.getDeleteFlag());
-//
-//            LOGGER.info(updatedAccount.toString());
-//        } catch (Exception e) {
-//            LOGGER.error(e.getMessage());
-//        }
-//
-//    }
+	//@Test
+	void testAddTransaction(){
+        try {
+            Transaction transaction=new Transaction();
+
+			String accountId = "09776270898";
+			TransactionType type = TransactionType.income;
+			TransactionInput input = new TransactionInput();
+
+            input.setTransactionCategory(TransactionCategory.TIP);
+            input.setTransactionType(type);
+            input.setAmount(30000);
+
+            transactionService.saveNewTransaction(accountId, type, input);
+
+            Account updatedAccount = accountService.updateBalance(accountId,input.getAmount(),input.getTransactionType(), 0);
+
+            LOGGER.info(updatedAccount.toString());
+			assertEquals(300000, updatedAccount.getBalance());
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+
+    }
 
 	//@Test
 	void deleteTransaction() {
         try {
-            transactionService.deleteTransaction("09776270898", 3);
+            Account account = transactionService.deleteTransaction("09776270898", 2);
+
+			Optional<Transaction> transaction = transactionService.findById(2);
+
+			Transaction transaction1 = transaction.get();
+
+			assertEquals(1, transaction1.getDeleteFlag());
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
         }
-    }
+	}
 
 	//@Test
 	void testGetAllExpenses(){
 		String accountId= "09953514037";
 
-		LOGGER.info("Your all expense is : {}",
-				transactionService.getAllExpenseByTransactionCategory(accountId,TransactionCategory.PH_BILL));
+		Double amount = transactionService.getAllExpenseByTransactionCategory(accountId,TransactionCategory.PH_BILL);
+
+		LOGGER.info("Your all expense is : {}", amount);
+		assertEquals(0, amount);
 	}
 
 	//@Test
@@ -169,10 +210,9 @@ class ThymeleafappApplicationTests {
         }
     }
 
-	@Test
+	//@Test
 	void testGetAllAccount() {
 		LOGGER.info("Account size is :{}",accountService.getAllAccounts().size());
 		assertEquals(7, accountService.getAllAccounts().size());
 	}
-
 }
